@@ -1,60 +1,55 @@
 #!/usr/bin/python3
-""" Class FileStorage """
-from json import dump, load, dumps
-from os.path import exists
-from models import base_model, user, place, state, city, amenity, review
-
-BaseModel = base_model.BaseModel
-User = user.User
-Place = place.Place
-State = state.State
-City = city.City
-Amenity = amenity.Amenity
-Review = review.Review
-name_class = ["BaseModel", "City", "State",
-              "Place", "Amenity", "Review", "User"]
+"""File Storage for AirBnb Console"""
+import json
+from os import path
+from models.base_model import BaseModel
+from models.state import State
+from models.user import User
+from models.place import Place
+from models.review import Review
+from models.amenity import Amenity
+from models.city import City
 
 
-class FileStorage:
-    """
-    """
+class FileStorage():
+    """Defines a Class for Filestorage"""
+
     __file_path = "file.json"
-    __objects = {}
+    __objects = dict()
 
     def all(self):
-        """
-        """
-        return FileStorage.__objects
+        """returns the dictionary __objects"""
+        return self.__objects
 
     def new(self, obj):
-        """ sets  the obj with key in __objects
-        """
-        class_name = obj.__class__.__name__
-        id = obj.id
-        clas_id = class_name + "." + id
-        FileStorage.__objects[clas_id] = obj
+        """sets in __objects the obj with key <obj class name>.id"""
+        self.__objects[obj.__class__.__name__ + "." + obj.id] = obj
 
     def save(self):
-        """ file storage
-        """
-        dict_to_json = {}
-        for key, value in FileStorage.__objects.items():
-            dict_to_json[key] = value.to_dict()
-        with open(FileStorage.__file_path, "w", encoding='utf-8') as fil:
-            dump(dict_to_json, fil)
+        """Serializes __objects to the JSON file """
+        temp = dict()
+        for keys in self.__objects.keys():
+            temp[keys] = self.__objects[keys].to_dict()
+        with open(self.__file_path, mode='w') as json_file:
+            json.dump(temp, json_file)
 
     def reload(self):
-        """ if (__file_path) exists deserializes JSON file to __objects
-            elif , do nothing. If the file not exist,
+        """deserializes the JSON file to __objects
+        (only if the JSON file (__file_path)
+        exists ; otherwise, do nothing.
+        If the file doesn't exist, no exception should be raised)
         """
-        dic_obj = {}
-        FileStorage.__objects = {}
-        if (exists(FileStorage.__file_path)):
-            with open(FileStorage.__file_path, "r") as fil:
-                dic_obj = load(fil)
-                for key, value in dic_obj.items():
-                    class_nam = key.split(".")[0]
-                    if class_nam in name_class:
-                        FileStorage.__objects[key] = eval(class_nam)(**value)
-                    else:
-                        pass
+
+        MODELS = [Amenity, BaseModel, City, Place, Review, State, User]
+
+        if path.exists(self.__file_path) is True:
+            with open(self.__file_path, 'r', encoding='utf-8') as json_file:
+                deserialize = json.load(json_file)
+            for key in deserialize.keys():
+                for model in MODELS:
+                    if model.__name__ == deserialize[key]["__class__"]:
+                        self.__objects[key] = model(**deserialize[key])
+        else:
+            with open(self.__file_path, "w", encoding='utf-8') as json_file:
+                json.dump({}, json_file)
+            self.reload()
