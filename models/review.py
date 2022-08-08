@@ -1,15 +1,11 @@
 #!/usr/bin/python3
-"""Review class
-"""
+"""Module for Review class."""
 
-import uuid
-from datetime import datetime
-from models import storage
 from models.base_model import BaseModel
 
 
 class Review(BaseModel):
-    """ Review class """
+    """Class representing a Review."""
     place_id = ""
     user_id = ""
     text = ""

@@ -1,13 +1,10 @@
 #!/usr/bin/python3
-""" City class """
+"""Module for City class."""
 
-import uuid
-from datetime import datetime
-from models import storage
 from models.base_model import BaseModel
 
 
 class City(BaseModel):
-    """ City class """
+    """Class representing a City."""
     state_id = ""
     name = ""

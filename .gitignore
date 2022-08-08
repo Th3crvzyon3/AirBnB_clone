@@ -1,5 +1,4 @@
-*~
-*main*
-*__pycache__*
-*.o
-*.pyc
+__pycache__/
+../__pycache__/
+../../__pycache__/
+../../../__pycache__/

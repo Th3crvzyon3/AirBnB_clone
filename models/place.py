@@ -1,14 +1,11 @@
 #!/usr/bin/python3
-""" Place class """
+"""Module for Place class."""
 
-import uuid
-from datetime import datetime
-from models import storage
 from models.base_model import BaseModel
 
 
 class Place(BaseModel):
-    """ Place class """
+    """Class representing a Place."""
     city_id = ""
     user_id = ""
     name = ""

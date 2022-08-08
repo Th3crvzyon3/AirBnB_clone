@@ -1,35 +1,53 @@
 #!/usr/bin/python3
-""" Test Place """
+"""Unittest module for the Place Class."""
 
 import unittest
-import pep8
-from models import place
+from datetime import datetime
+import time
+from models.place import Place
+import re
+import json
+from models.engine.file_storage import FileStorage
+import os
+from models import storage
 from models.base_model import BaseModel
 
-class Test_Place(unittest.TestCase):
-    """ Tests Place """
 
-    def test_pep8(self):
-        """ Tests pep8 """
-        pep8style = pep8.StyleGuide(quite=True)
-        result = pep8style.check_files(["models/place.py"])
-        self.assertEqual(result.total_errors, 0, "Check pep8")
+class TestPlace(unittest.TestCase):
+
+    """Test Cases for the Place class."""
+
+    def setUp(self):
+        """Sets up test methods."""
+        pass
+
+    def tearDown(self):
+        """Tears down test methods."""
+        self.resetStorage()
+        pass
+
+    def resetStorage(self):
+        """Resets FileStorage data."""
+        FileStorage._FileStorage__objects = {}
+        if os.path.isfile(FileStorage._FileStorage__file_path):
+            os.remove(FileStorage._FileStorage__file_path)
+
+    def test_8_instantiation(self):
+        """Tests instantiation of Place class."""
+
+        b = Place()
+        self.assertEqual(str(type(b)), "<class 'models.place.Place'>")
+        self.assertIsInstance(b, Place)
+        self.assertTrue(issubclass(type(b), BaseModel))
+
+    def test_8_attributes(self):
+        """Tests the attributes of Place class."""
+        attributes = storage.attributes()["Place"]
+        o = Place()
+        for k, v in attributes.items():
+            self.assertTrue(hasattr(o, k))
+            self.assertEqual(type(getattr(o, k, None)), v)
 
 
-    def test_Place_dict(self):
-        """ Place_dict """
-        self.assertTrue('id' in self.place.__dict__)
-        self.assertTrue('created_at' in self.place.__dict__)
-        self.assertTrue('updated_at' in self.place.__dict__)
-        self.assertTrue('city_id' in self.place.__dict__)
-        self.assertTrue('user_id' in self.place.__dict__)
-        self.assertTrue('name' in self.place.__dict__)
-        self.assertTrue('__class__' in self.place.__dict__)
-
-    def test_save_Place(self):
-        """ Save_Place """
-        self.place.save()
-        self.assertNotEqual(self.place.created_at, self.place.updated_at)
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
